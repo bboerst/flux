@@ -93,7 +93,7 @@ build/.flux.done: build/fluxd build/kubectl build/sops build/kustomize docker/ss
 
 build/fluxd: $(FLUXD_DEPS)
 build/fluxd: cmd/fluxd/*.go
-	CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} go build -o $@ $(LDFLAGS) -ldflags "-X main.version=$(shell ./docker/image-tag)" ./cmd/fluxd
+	CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} go build -o $@ $(LDFLAGS) ./cmd/fluxd
 
 build/kubectl: cache/linux-$(ARCH)/kubectl-$(KUBECTL_VERSION)
 test/bin/kubectl: cache/$(CURRENT_OS_ARCH)/kubectl-$(KUBECTL_VERSION)
@@ -191,5 +191,11 @@ build-fluxctl: release-bins
 docs-deps:
 	pip3 install -r docs/requirements.txt
 
-serve-docs: docs-deps
-	mkdocs serve
+serve-docs: build-docs
+	@echo Stating docs website on http://localhost:${DOCS_PORT}/_build/html/index.html
+	@docker run -i -p ${DOCS_PORT}:8000 -e USER_ID=$$UID flux-docs
+
+.PHONY: build.image.multiarch
+# linux/amd64,linux/arm64,
+build.image.multiarch:
+	docker buildx build --platform linux/arm64,linux/arm/v7 -t bboerst/flux:latest-multiarch -f docker/Dockerfile.build . --push
