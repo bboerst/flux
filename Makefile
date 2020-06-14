@@ -198,4 +198,4 @@ serve-docs: build-docs
 .PHONY: build.image.multiarch
 # linux/amd64,linux/arm64,
 build.image.multiarch:
-	docker buildx build --platform linux/arm64,linux/arm/v7 -t bboerst/flux:latest-multiarch -f docker/Dockerfile.build . --push
+	docker buildx build --platform linux/arm64,linux/arm/v7 -t bboerst/flux:latest-multiarch-1-19-0 -f docker/Dockerfile.build . --push

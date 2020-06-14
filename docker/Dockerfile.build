@@ -14,7 +14,7 @@ RUN make ARCH=$TARGETARCH build/kubectl build/helm build/fluxd build/kustomize b
 
 # build final image
 #
-FROM alpine:3.10
+FROM alpine:3.12
 
 WORKDIR /home/flux
 
